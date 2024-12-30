@@ -15,6 +15,5 @@ export default function App() {
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
       </Stack.Navigator>
-   
   );
 }
