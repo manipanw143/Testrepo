@@ -57,15 +57,15 @@ const HomeScreen = () => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <TouchableOpacity style={styles.templeCard}>
               <Image
-                source={{ uri: 'https://placeholder.com/400x300' }}
+                source={require('../images/temple2.png')}
                 style={styles.templeImage}
               />
               <LinearGradient
                 colors={['transparent', 'rgba(0,0,0,0.8)']}
                 style={styles.templeOverlay}
               >
-                <Text style={styles.templeText}>Seervi Temple</Text>
-                <Text style={styles.templeLocation}>Jodhpur, Rajasthan</Text>
+                <Text style={styles.templeText}>Lingarajapuram Temple</Text>
+                <Text style={styles.templeLocation}>Bangalore</Text>
               </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity style={styles.templeCard}>
