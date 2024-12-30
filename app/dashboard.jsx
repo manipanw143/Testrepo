@@ -1,169 +1,204 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import React, { useState, useCallback } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useFonts, Roboto_400Regular, Roboto_500Medium, Roboto_700Bold } from '@expo-google-fonts/roboto';
-import CircularProgress from './circularprogess';
-import { AddressTab, ContactTab, EducationTab, FamilyTab, JobTab, OverviewTab, PersonalTab } from './Tabcomponet';
+import UserItem from './UserItem';
+import FilterModal from './FilterModal';
 
-const windowWidth = Dimensions.get('window').width;
+const initialUsers = [
+  { id: '1', name: 'John Doe', role: 'Admin', department: 'IT' },
+  { id: '2', name: 'Jane Smith', role: 'User', department: 'HR' },
+  { id: '3', name: 'Mike Johnson', role: 'Manager', department: 'Sales' },
+  { id: '4', name: 'Emily Brown', role: 'User', department: 'Marketing' },
+  { id: '5', name: 'David Lee', role: 'Manager', department: 'Finance' },
+];
 
-const Dashboard = () => {
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: 'overview', title: 'Overview' },
-    { key: 'personal', title: 'Personal' },
-    { key: 'job', title: 'Job' },
-    { key: 'contact', title: 'Contact' },
-    { key: 'family', title: 'Family' },
-    { key: 'education', title: 'Education' },
-    { key: 'address', title: 'Address' },
-  ]);
+export default function Dashboard() {
+  const navigation = useNavigation();
+  const [users, setUsers] = useState(initialUsers);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+  const [filters, setFilters] = useState({ role: '', department: '' });
 
-  const [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_500Medium,
-    Roboto_700Bold,
-  });
+  useFocusEffect(
+    useCallback(() => {
+      // Fetch users from API or local storage here
+      // For now, we'll use the initialUsers
+      setUsers(initialUsers);
+    }, [])
+  );
 
-  const user = {
-    name: 'John Doe',
-    photo: 'https://via.placeholder.com/150',
-    profileCompletion: 85,
-    personalInfo: {
-      email: 'john.doe@example.com',
-      phone: '+1 (555) 123-4567',
-      dateOfBirth: 'January 15, 1985',
-      nationality: 'American',
-      gender: 'Male',
-    },
-    jobInfo: {
-      title: 'Senior Software Engineer',
-      company: 'Tech Innovations Inc.',
-      experience: '10 years',
-      skills: ['React Native', 'JavaScript', 'Node.js', 'Python'],
-    },
-    contactInfo: {
-      email: 'john.doe@example.com',
-      phone: '+1 (555) 123-4567',
-      linkedin: 'linkedin.com/in/johndoe',
-      github: 'github.com/johndoe',
-    },
-    familyInfo: {
-      maritalStatus: 'Married',
-      spouse: 'Jane Doe',
-      children: 2,
-    },
-    education: [
-      {
-        degree: 'Master of Science in Computer Science',
-        institution: 'Stanford University',
-        year: '2010',
-      },
-      {
-        degree: 'Bachelor of Science in Software Engineering',
-        institution: 'MIT',
-        year: '2008',
-      },
-    ],
-    address: {
-      street: '123 Tech Street',
-      city: 'San Francisco',
-      state: 'CA',
-      zipCode: '94105',
-      country: 'USA',
-    },
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (filters.role ? user.role === filters.role : true) &&
+    (filters.department ? user.department === filters.department : true)
+  );
+
+  const handleSearch = (text) => {
+    setSearchQuery(text);
   };
 
-  const renderScene = SceneMap({
-    overview: () => <OverviewTab user={user} />,
-    personal: () => <PersonalTab user={user} />,
-    job: () => <JobTab user={user} />,
-    contact: () => <ContactTab user={user} />,
-    family: () => <FamilyTab user={user} />,
-    education: () => <EducationTab user={user} />,
-    address: () => <AddressTab user={user} />,
-  });
+  const handleFilter = (newFilters) => {
+    setFilters(newFilters);
+    setFilterModalVisible(false);
+  };
 
-  if (!fontsLoaded) {
-    return <View><Text>Loading...</Text></View>;
-  }
+  const renderItem = ({ item }) => (
+    <UserItem user={item} onPress={() => navigation.navigate('ProfileView', { userId: item.id })} />
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.profileImageContainer}>
-          <Image source={{ uri: user.photo }} style={styles.profileImage} />
-          <CircularProgress percentage={user.profileCompletion} />
-        </View>
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.completionText}>
-          {user.profileCompletion}% Profile Completed
-        </Text>
+        <TouchableOpacity
+          style={styles.profileButton}
+          onPress={() => navigation.navigate('Profile')}
+        >
+          <Icon name="person" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Dashboard</Text>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={() => {
+            // Add logout logic here
+            console.log('Logout pressed');
+          }}
+        >
+          <Icon name="logout" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: windowWidth }}
-        renderTabBar={props => (
-          <TabBar
-            {...props}
-            scrollEnabled
-            style={styles.tabBar}
-            labelStyle={styles.tabLabel}
-            indicatorStyle={styles.tabIndicator}
-          />
-        )}
+
+      <View style={styles.searchContainer}>
+        <Icon name="search" size={24} color="#999" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search users..."
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setFilterModalVisible(true)}
+        >
+          <Icon name="filter-list" size={24} color="#3498db" />
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        data={filteredUsers}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        style={styles.userList}
+        contentContainerStyle={styles.userListContent}
+      />
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('AddProfile')}
+        >
+          <Icon name="add" size={24} color="#fff" />
+          <Text style={styles.addButtonText}>Add Profile</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.roleButton}
+          onPress={() => navigation.navigate('RoleManagement')}
+        >
+          <Icon name="people" size={24} color="#fff" />
+          <Text style={styles.roleButtonText}>Manage Roles</Text>
+        </TouchableOpacity>
+      </View>
+
+      <FilterModal
+        visible={isFilterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        onApply={handleFilter}
+        initialFilters={filters}
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#f5f5f5',
   },
   header: {
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#4A90E2',
+    justifyContent: 'space-between',
+    backgroundColor: '#3498db',
+    padding: 16,
+    elevation: 4,
   },
-  profileImageContainer: {
-    width: 150,
-    height: 150,
-    justifyContent: 'center',
+  profileButton: {
+    padding: 8,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  logoutButton: {
+    padding: 8,
+  },
+  searchContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    margin: 16,
+    borderRadius: 8,
+    elevation: 2,
   },
-  profileImage: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
+  searchIcon: {
+    padding: 10,
   },
-  name: {
-    fontFamily: 'Roboto_700Bold',
-    fontSize: 24,
-    color: '#FFFFFF',
-    marginTop: 10,
+  searchInput: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
   },
-  completionText: {
-    fontFamily: 'Roboto_400Regular',
-    color: '#FFFFFF',
-    fontSize: 14,
-    marginTop: 5,
+  filterButton: {
+    padding: 10,
   },
-  tabBar: {
-    backgroundColor: '#4A90E2',
+  userList: {
+    flex: 1,
   },
-  tabLabel: {
-    fontFamily: 'Roboto_500Medium',
-    fontSize: 12,
+  userListContent: {
+    paddingHorizontal: 16,
   },
-  tabIndicator: {
-    backgroundColor: '#FFFFFF',
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 16,
+    backgroundColor: '#fff',
+    elevation: 8,
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2ecc71',
+    padding: 12,
+    borderRadius: 8,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  roleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e74c3c',
+    padding: 12,
+    borderRadius: 8,
+  },
+  roleButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
 });
-
-export default Dashboard;
 

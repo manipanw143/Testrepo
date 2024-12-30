@@ -1,20 +1,14 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+// index.js or main entry file
+import { AppRegistry } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import Login from './login';
-import Register from './register/register';
-import Dashboard from './dashboard';
+import App from './App';
+import { name as EasyAPp} from '../app.json';
 
-const Stack = createStackNavigator();
+// Wrap the App in NavigationContainer here (only once)
+const AppWithNavigation = () => (
+  <NavigationContainer>
+    <App/>
+  </NavigationContainer>
+);
 
-export default function App() {
-  return (
-    
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Dashboard" component={Dashboard} />
-      </Stack.Navigator>
-   
-  );
-}
+AppRegistry.registerComponent(EasyAPp, () => AppWithNavigation);
