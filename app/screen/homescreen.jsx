@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+// import DonationScreen from './DonationScreen';
+
 
 const { width } = Dimensions.get('window');
 
@@ -33,6 +35,7 @@ const HomeScreen = () => {
       navigationTarget: 'DonationScreen'
     }
   ];
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,6 +105,23 @@ const HomeScreen = () => {
             ))}
           </View>
         </View>
+
+        {profileCards.map((card, index) => (
+  <TouchableOpacity 
+    key={index} 
+    style={styles.profileCard}
+    onPress={() => handleCardPress(card)}
+  >
+    <LinearGradient
+      colors={card.color}
+      style={styles.cardGradient}
+    >
+      <MaterialCommunityIcons name={card.icon} size={32} color="#fff" />
+      <Text style={styles.cardTitle}>{card.title}</Text>
+      <Text style={styles.cardDescription}>{card.description}</Text>
+    </LinearGradient>
+  </TouchableOpacity>
+))}
 
         {/* Events Section */}
         <View style={styles.section}>

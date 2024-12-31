@@ -1,6 +1,0 @@
-** BUILD FAILED **
-
-
-The following build commands failed:
-	CompileC /Users/aadityamuleva/Library/Developer/Xcode/DerivedData/EasyAPp-geqeujkxueujeifsvwcigxqhbqrm/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/react-native-webview.build/Objects-normal/x86_64/RNCWebViewModule.o /Users/aadityamuleva/Documents/Testrepo/node_modules/react-native-webview/apple/RNCWebViewModule.mm normal x86_64 objective-c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'react-native-webview' from project 'Pods')
-(1 failure)
