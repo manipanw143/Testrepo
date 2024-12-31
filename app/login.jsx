@@ -30,7 +30,7 @@ export default function Login() {
     const checkToken = async () => {
       const token = await AsyncStorage.getItem(TOKEN_KEY);
       if (token) {
-        navigation.navigate('Dashboard');
+        navigation.navigate('HomeScreen');
       }
     };
     checkToken();
@@ -50,7 +50,7 @@ export default function Login() {
         await AsyncStorage.setItem('userid', String(data?.user?.id));
         await AsyncStorage.setItem('userstatus', String(data?.user?.userstatus));
         await AsyncStorage.setItem('emeelanrole', String(data?.user?.emeelanrole));
-        navigation.navigate('Dashboard');
+        navigation.navigate('HomeScreen');
       } else {
         const errorData = await res.json();
         Alert.alert('Login Failed', errorData?.message || 'Invalid Credentials.');

@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+node_modules
+=======
 # Ignore node_modules directory
 node_modules/
 
@@ -12,3 +15,4 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
+>>>>>>> ea7f20bb3fe654becb0e8cf50aa2776378ebf63d
