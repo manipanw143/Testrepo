@@ -1,150 +1,170 @@
-// DonationScreen.js
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
   TextInput,
-  Alert 
+  Image,
+  Dimensions
 } from 'react-native';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+const { width } = Dimensions.get('window');
 
 const DonationScreen = ({ navigation }) => {
   const [amount, setAmount] = useState('');
   const [selectedTemple, setSelectedTemple] = useState(null);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState(null);
 
   const temples = [
-    { id: 1, name: 'Lingarajapuram Temple', location: 'Bangalore' },
-    { id: 2, name: 'Main Temple', location: 'Udaipur' }
+    {
+      id: 1,
+      name: 'Seervi Bader',
+      location: 'Bilara, Rajasthan',          
+      image: require('../images/temple3.png')
+    },
+    {
+      id: 2,
+      name: 'Lingrajapuram Temple',
+      location: 'Bangalore, Karnataka',
+      image: require('../images/temple2.png')
+    }
   ];
+
+  const predefinedAmounts = [501, 1001, 2001, 5001, 10001];
 
   const paymentMethods = [
-    { id: 'upi', name: 'UPI', icon: 'cellphone' },
-    { id: 'card', name: 'Credit/Debit Card', icon: 'credit-card' },
-    { id: 'netbanking', name: 'Net Banking', icon: 'bank' },
-    { id: 'wallet', name: 'Digital Wallet', icon: 'wallet' }
+    { id: 'upi', name: 'UPI', icon: 'phone' },
+    { id: 'card', name: 'Card', icon: 'card' },
+    { id: 'bank', name: 'Net Banking', icon: 'bank' },
+    { id: 'wallet', name: 'Wallet', icon: 'wallet' }
   ];
 
-  const predefinedAmounts = [101, 501, 1001, 2001, 5001];
-
-  const handleDonation = () => {
-    if (!amount || !selectedTemple || !selectedPaymentMethod) {
-      Alert.alert('Required Fields', 'Please fill in all required fields');
-      return;
-    }
-    
-    // Here you would integrate with your payment gateway
-    Alert.alert(
-      'Confirm Donation',
-      `Confirm donation of ₹${amount} to ${selectedTemple.name}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Confirm', 
-          onPress: () => {
-            // Implement payment gateway integration here
-            console.log('Process payment', {
-              amount,
-              temple: selectedTemple,
-              paymentMethod: selectedPaymentMethod
-            });
-          }
-        }
-      ]
-    );
-  };
-
   return (
-    <ScrollView style={styles.container}>
-      <LinearGradient
-        colors={['#4a90e2', '#357abd']}
-        style={styles.header}
-      >
-        <Text style={styles.headerTitle}>Temple Donation</Text>
-        <Text style={styles.headerSubtitle}>Support our heritage</Text>
+    <View style={styles.container}>
+      {/* Header */}
+      <LinearGradient colors={['#4a90e2', '#357abd']} style={styles.header}>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()} 
+          style={styles.backButton}
+        >
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.headerTitle}>Temple Donation</Text>
+          <Text style={styles.headerSubtitle}>  Support our heritage</Text>
+        </View>
+        <MaterialCommunityIcons name="gift-outline" size={24} color="#fff" />
       </LinearGradient>
 
-      <View style={styles.content}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Temple Selection */}
-        <Text style={styles.sectionTitle}>Select Temple</Text>
-        <View style={styles.templeContainer}>
-          {temples.map(temple => (
-            <TouchableOpacity
-              key={temple.id}
-              style={[
-                styles.templeCard,
-                selectedTemple?.id === temple.id && styles.selectedCard
-              ]}
-              onPress={() => setSelectedTemple(temple)}
-            >
-              <MaterialCommunityIcons name="temple-hindu" size={24} color="#4a90e2" />
-              <Text style={styles.templeName}>{temple.name}</Text>
-              <Text style={styles.templeLocation}>{temple.location}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Select Temple</Text>
+          <View style={styles.templesGrid}>
+            {temples.map((temple) => (
+              <TouchableOpacity
+                key={temple.id}
+                style={[
+                  styles.templeCard,
+                  selectedTemple?.id === temple.id && styles.selectedTempleCard
+                ]}
+                onPress={() => setSelectedTemple(temple)}
+              >
+                <Image source={temple.image} style={styles.templeImage} />
+                <LinearGradient
+                  colors={['transparent', 'rgba(0,0,0,0.8)']}
+                  style={styles.templeOverlay}
+                >
+                  <Text style={styles.templeName}>{temple.name}</Text>
+                  <Text style={styles.templeLocation}>{temple.location}</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         {/* Amount Selection */}
-        <Text style={styles.sectionTitle}>Select Amount</Text>
-        <View style={styles.amountContainer}>
-          {predefinedAmounts.map((preAmount) => (
-            <TouchableOpacity
-              key={preAmount}
-              style={[
-                styles.amountButton,
-                amount === preAmount.toString() && styles.selectedAmount
-              ]}
-              onPress={() => setAmount(preAmount.toString())}
-            >
-              <Text style={styles.amountText}>₹{preAmount}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        
-        <TextInput
-          style={styles.customAmount}
-          placeholder="Enter custom amount"
-          keyboardType="numeric"
-          value={amount}
-          onChangeText={setAmount}
-        />
-
-        {/* Payment Method Selection */}
-        <Text style={styles.sectionTitle}>Select Payment Method</Text>
-        <View style={styles.paymentContainer}>
-          {paymentMethods.map(method => (
-            <TouchableOpacity
-              key={method.id}
-              style={[
-                styles.paymentMethod,
-                selectedPaymentMethod?.id === method.id && styles.selectedPayment
-              ]}
-              onPress={() => setSelectedPaymentMethod(method)}
-            >
-              <MaterialCommunityIcons name={method.icon} size={24} color="#4a90e2" />
-              <Text style={styles.paymentText}>{method.name}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Select Amount</Text>
+          <View style={styles.amountsGrid}>
+            {predefinedAmounts.map((amt) => (
+              <TouchableOpacity
+                key={amt}
+                style={[
+                  styles.amountButton,
+                  amount === amt.toString() && styles.selectedAmountButton
+                ]}
+                onPress={() => setAmount(amt.toString())}
+              >
+                <Text style={[
+                  styles.amountText,
+                  amount === amt.toString() && styles.selectedAmountText
+                ]}>
+                  ₹{amt.toLocaleString()}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TextInput
+            style={styles.customAmount}
+            value={amount}
+            onChangeText={setAmount}
+            placeholder="Enter custom amount"
+            keyboardType="numeric"
+            placeholderTextColor="#666"
+          />
         </View>
 
-        {/* Donation Button */}
-        <TouchableOpacity 
-          style={styles.donateButton}
-          onPress={handleDonation}
+        {/* Payment Methods */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Payment Method</Text>
+          <View style={styles.paymentGrid}>
+            {paymentMethods.map((method) => (
+              <TouchableOpacity
+                key={method.id}
+                style={[
+                  styles.paymentButton,
+                  selectedPayment?.id === method.id && styles.selectedPaymentButton
+                ]}
+                onPress={() => setSelectedPayment(method)}
+              >
+                <MaterialCommunityIcons
+                  name={method.icon}
+                  size={24}
+                  color={selectedPayment?.id === method.id ? '#fff' : '#4a90e2'}
+                />
+                <Text style={[
+                  styles.paymentText,
+                  selectedPayment?.id === method.id && styles.selectedPaymentText
+                ]}>
+                  {method.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Donate Button */}
+        <TouchableOpacity
+          style={[
+            styles.donateButton,
+            (!amount || !selectedTemple || !selectedPayment) && styles.disabledButton
+          ]}
+          disabled={!amount || !selectedTemple || !selectedPayment}
         >
           <LinearGradient
-            colors={['#4CAF50', '#45a049']}
+            colors={['#4a90e2', '#357abd']}
             style={styles.donateGradient}
           >
             <Text style={styles.donateText}>Proceed to Donate</Text>
           </LinearGradient>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -154,75 +174,96 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   header: {
-    padding: 20,
-    paddingTop: 40,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    paddingTop: 48,
+  },
+  backButton: {
+    padding: 8,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },
   headerSubtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#fff',
     opacity: 0.8,
   },
   content: {
+    flex: 1,
+  },
+  section: {
     padding: 16,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 12,
+    marginBottom: 16,
     color: '#333',
   },
-  templeContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+  templesGrid: {
+    flexDirection: 'column',
+    gap: 16,
   },
   templeCard: {
-    width: '48%',
-    padding: 16,
-    backgroundColor: '#fff',
+    height: 180,
     borderRadius: 12,
-    marginBottom: 16,
-    alignItems: 'center',
-    elevation: 2,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
-  selectedCard: {
-    borderColor: '#4a90e2',
+  selectedTempleCard: {
     borderWidth: 2,
+    borderColor: '#4a90e2',
+  },
+  templeImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  templeOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
   },
   templeName: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 8,
-    textAlign: 'center',
+    color: '#fff',
   },
   templeLocation: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 4,
+    color: '#fff',
+    opacity: 0.8,
   },
-  amountContainer: {
+  amountsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    gap: 8,
     justifyContent: 'space-between',
   },
   amountButton: {
-    width: '18%',
-    padding: 12,
+    width: (width - 64) / 3,
+    padding: 16,
     backgroundColor: '#fff',
-    borderRadius: 8,
-    marginBottom: 12,
+    borderRadius: 12,
     alignItems: 'center',
     elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
-  selectedAmount: {
+  selectedAmountButton: {
     backgroundColor: '#4a90e2',
   },
   amountText: {
@@ -230,40 +271,52 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
-  customAmount: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 8,
-    marginTop: 12,
-    marginBottom: 20,
-    fontSize: 16,
+  selectedAmountText: {
+    color: '#fff',
   },
-  paymentContainer: {
+  customAmount: {
+    marginTop: 16,
+    padding: 16,
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 8,
+    fontSize: 16,
   },
-  paymentMethod: {
+  paymentGrid: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+  paymentButton: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    gap: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
-  selectedPayment: {
-    backgroundColor: '#f0f9ff',
+  selectedPaymentButton: {
+    backgroundColor: '#4a90e2',
   },
   paymentText: {
-    marginLeft: 12,
     fontSize: 16,
     color: '#333',
   },
+  selectedPaymentText: {
+    color: '#fff',
+  },
   donateButton: {
-    marginTop: 24,
-    marginBottom: 32,
+    margin: 16,
     borderRadius: 12,
     overflow: 'hidden',
     elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   donateGradient: {
     padding: 16,
@@ -273,6 +326,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
 });
 

@@ -2,12 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-// import DonationScreen from './DonationScreen';
-
 
 const { width } = Dimensions.get('window');
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const profileCards = [
     {
       title: 'Matrimonial',
@@ -36,10 +34,14 @@ const HomeScreen = () => {
     }
   ];
 
+  const handleCardPress = (navigationTarget) => {
+    if (navigationTarget) {
+      navigation.navigate(navigationTarget);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header with 3D effect */}
       <LinearGradient colors={['#4a90e2', '#357abd']} style={styles.header}>
         <Text style={styles.headerTitle}>Seervi Samaj</Text>
         <View style={styles.headerIcons}>
@@ -53,11 +55,22 @@ const HomeScreen = () => {
       </LinearGradient>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        
-        {/* Temple Section with Images */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Temples</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <TouchableOpacity style={styles.templeCard}>
+              <Image
+                source={require('../images/temple3.png')}
+                style={styles.templeImage}
+              />
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.8)']}
+                style={styles.templeOverlay}
+              >
+                <Text style={styles.templeText}>Seervi Bader</Text>
+                <Text style={styles.templeLocation}>Bilara, Rajasthan</Text>
+              </LinearGradient>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.templeCard}>
               <Image
                 source={require('../images/temple2.png')}
@@ -67,32 +80,22 @@ const HomeScreen = () => {
                 colors={['transparent', 'rgba(0,0,0,0.8)']}
                 style={styles.templeOverlay}
               >
-                <Text style={styles.templeText}>Lingarajapuram Temple</Text>
-                <Text style={styles.templeLocation}>Bangalore</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.templeCard}>
-              <Image
-                source={require('../images/temple1.jpg')}
-                style={styles.templeImage}
-              />
-              <LinearGradient
-                colors={['transparent', 'rgba(0,0,0,0.8)']}
-                style={styles.templeOverlay}
-              >
-                <Text style={styles.templeText}>Main Temple</Text>
-                <Text style={styles.templeLocation}>Bilara, Rajasthan</Text>
+                <Text style={styles.templeText}>Lingrajapuram Temple</Text>
+                <Text style={styles.templeLocation}>Bangalore, Karnataka</Text>
               </LinearGradient>
             </TouchableOpacity>
           </ScrollView>
         </View>
 
-        {/* Profile Cards Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Community Services</Text>
           <View style={styles.profileCardsContainer}>
             {profileCards.map((card, index) => (
-              <TouchableOpacity key={index} style={styles.profileCard}>
+              <TouchableOpacity
+                key={index}
+                style={styles.profileCard}
+                onPress={() => handleCardPress(card.navigationTarget)}
+              >
                 <LinearGradient
                   colors={card.color}
                   style={styles.cardGradient}
@@ -106,24 +109,6 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        {profileCards.map((card, index) => (
-  <TouchableOpacity 
-    key={index} 
-    style={styles.profileCard}
-    onPress={() => handleCardPress(card)}
-  >
-    <LinearGradient
-      colors={card.color}
-      style={styles.cardGradient}
-    >
-      <MaterialCommunityIcons name={card.icon} size={32} color="#fff" />
-      <Text style={styles.cardTitle}>{card.title}</Text>
-      <Text style={styles.cardDescription}>{card.description}</Text>
-    </LinearGradient>
-  </TouchableOpacity>
-))}
-
-        {/* Events Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Upcoming Events</Text>
           <View style={styles.eventContainer}>
@@ -146,7 +131,6 @@ const HomeScreen = () => {
         </View>
       </ScrollView>
 
-      {/* Bottom Navigation with 3D effect */}
       <LinearGradient colors={['#fff', '#f8f8f8']} style={styles.bottomNav}>
         {['home', 'calendar', 'people', 'menu'].map((icon, index) => (
           <TouchableOpacity key={index} style={styles.navItem}>
