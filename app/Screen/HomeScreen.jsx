@@ -17,13 +17,15 @@ const HomeScreen = ({ navigation }) => {
       title: 'Community Members',
       icon: 'account-group',
       description: 'Connect with members',
-      color: ['#4ECDC4', '#45B7AF']
+      color: ['#4ECDC4', '#45B7AF'],
+      navigationTarget: 'CommunityScreen'
     },
     {
       title: 'Business Network',
       icon: 'briefcase',
       description: 'Professional networking',
-      color: ['#6C63FF', '#5A52D5']
+      color: ['#6C63FF', '#5A52D5'],
+      navigationTarget: 'BusinessNetwork'
     },
     {
       title: 'Temple Donation',
