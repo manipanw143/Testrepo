@@ -3,11 +3,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Login from './login';
 import Register from './register/register';
-import Dashboard from './profilescreen';
-import DonationScreen from './screen/DonationScreen';
-import HomeScreen from './screen/HomeScreen';             
-import CommunityScreen from './screen/CommunityScreen';
-import MatrimonialCard from './screen/MatrimonialCard';
+// import Dashboard from './profilescreen';
+import DonationScreen from './Screen/DonationScreen';
+import HomeScreen from './Screen/homescreen';             
+import CommunityScreen from './Screen/CommunityScreen';
+import MatrimonialCard from './Screen/MatrimonialCard';
 // import ProfileScreen from './screen/ProfileScreen';
 
 const Stack = createStackNavigator();

@@ -86,15 +86,6 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-<<<<<<< HEAD
-    namespace "com.easyapp"
-    defaultConfig {
-        applicationId "com.easyapp"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-=======
     namespace 'com.anonymous.EasyAPp'
     defaultConfig {
         applicationId 'com.anonymous.EasyAPp'
@@ -102,7 +93,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
->>>>>>> ea7f20bb3fe654becb0e8cf50aa2776378ebf63d
     }
     signingConfigs {
         debug {

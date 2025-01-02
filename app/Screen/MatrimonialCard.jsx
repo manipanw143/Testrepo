@@ -1,186 +1,221 @@
-// MatrimonialCard.js
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
-import axios from 'axios';
+import React from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 
-const MatrimonialCard = () => {
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchProfileData();
-  }, []);
-
-  const fetchProfileData = async () => {
-    try {
-      const response = await axios.get('https://eksamaj.com/bader_preprod');
-      setProfileData(response.data.data);
-      setLoading(false);
-    } catch (err) {
-      setError('Failed to fetch profile data');
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0066CC" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    );
-  }
+// Individual Profile Card Component
+const ProfileCard = ({ profile }) => {
+  const [isExpanded, setIsExpanded] = React.useState(false);
 
   return (
-    <View style={styles.container}>
-      {/* Card Container */}
-      <View style={styles.cardContainer}>
-        {/* Left Card - Summary Info */}
-        <View style={styles.summaryCard}>
-          <Image
-            source={profileData?.attributes?.photo?.url 
-              ? { uri: profileData.attributes.photo.url }
-              : require('../images/default-avatar.png')}
-            style={styles.profileImage}
-          />
-          <View style={styles.summaryInfo}>
-            <Text style={styles.name}>{profileData?.attributes?.name}</Text>
-            <Text style={styles.basicInfo}>
-              {profileData?.attributes?.age} years old
-            </Text>
-          </View>
+    <View style={styles.cardContainer}>
+      {/* Compact Header Section */}
+      <View style={styles.header}>
+        <View style={styles.profileImageContainer}>
+          <Icon name="user" size={32} color="#FFA500" />
         </View>
-
-        {/* Right Card - Detailed Info */}
-        <View style={styles.detailsCard}>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Father's Name:</Text>
-            <Text style={styles.value}>{profileData?.attributes?.fatherName}</Text>
-          </View>
-          
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>DOB:</Text>
-            <Text style={styles.value}>{profileData?.attributes?.dob}</Text>
-          </View>
-          
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Gotra:</Text>
-            <Text style={styles.value}>{profileData?.attributes?.gotra}</Text>
-          </View>
-
-          <TouchableOpacity style={styles.seeMoreButton}>
-            <Text style={styles.buttonText}>See More</Text>
-          </TouchableOpacity>
+        <View>
+          <Text style={styles.name}>{profile.name}</Text>
+          <Text style={styles.community}>{profile.community}</Text>
         </View>
       </View>
+
+      {/* Basic Info (Always Visible) */}
+      <View style={styles.infoContainer}>
+        <View style={styles.row}>
+          <Icon name="home" size={20} color="#FFA500" />
+          <View>
+            <Text style={styles.label}>गोत्र / Gotra</Text>
+            <Text style={styles.info}>{profile.gotra}</Text>
+          </View>
+        </View>
+
+        <View style={styles.row}>
+          <Icon name="phone" size={20} color="#FFA500" />
+          <View>
+            <Text style={styles.label}>फ़ोन / Phone</Text>
+            <Text style={styles.info}>{profile.phone}</Text>
+          </View>
+        </View>
+
+        <View style={styles.row}>
+          <Icon name="user" size={20} color="#FFA500" />
+          <View>
+            <Text style={styles.label}>आयु / Age</Text>
+            <Text style={styles.info}>{profile.age}</Text>
+          </View>
+        </View>
+
+        <View style={styles.row}>
+          <Icon name="briefcase" size={20} color="#FFA500" />
+          <View>
+            <Text style={styles.label}>व्यवसाय / Job</Text>
+            <Text style={styles.info}>{profile.job}</Text>
+          </View>
+        </View>
+
+        {/* Expand Button */}
+        <TouchableOpacity
+          onPress={() => setIsExpanded(!isExpanded)}
+          style={styles.expandButton}
+        >
+          <Text style={styles.expandText}>
+            {isExpanded ? 'कम जानकारी / Show Less' : 'अधिक जानकारी / View More'}
+          </Text>
+          <Icon name={isExpanded ? 'chevron-up' : 'chevron-down'} size={20} color="#FFA500" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Expanded Details */}
+      {isExpanded && (
+        <View style={styles.expandedInfo}>
+          <View style={styles.expandedRow}>
+            <Text style={styles.label}>पिता का नाम / Father's Name</Text>
+            <Text style={styles.info}>{profile.fatherName}</Text>
+          </View>
+
+          <View style={styles.expandedRow}>
+            <Text style={styles.label}>माता का नाम / Mother's Name</Text>
+            <Text style={styles.info}>{profile.motherName}</Text>
+          </View>
+
+          <View style={styles.expandedRow}>
+            <Text style={styles.label}>जन्म तिथि / Date of Birth</Text>
+            <Text style={styles.info}>{profile.dateOfBirth}</Text>
+          </View>
+
+          <View style={styles.expandedRow}>
+            <Icon name="map-pin" size={20} color="#FFA500" />
+            <View>
+              <Text style={styles.label}>पता / Address</Text>
+              <Text style={styles.info}>{profile.location}</Text>
+            </View>
+          </View>
+
+          <View style={styles.expandedRow}>
+            <Icon name="mail" size={20} color="#FFA500" />
+            <View>
+              <Text style={styles.label}>ईमेल / Email</Text>
+              <Text style={styles.info}>{profile.email}</Text>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
+// Main Container Component with Scrollable List
+const SamajProfileList = () => {
+  // Sample data array - replace with your actual data
+  const profiles = [
+    {
+      name: "राम कुमार शर्मा / Ram Kumar Sharma",
+      age: "35 वर्ष / 35 years",
+      dateOfBirth: "15 मई 1989 / 15 May 1989",
+      fatherName: "श्री मोहन शर्मा / Shri Mohan Sharma",
+      motherName: "श्रीमती सीता शर्मा / Smt. Sita Sharma",
+      location: "दिल्ली, भारत / Delhi, India",
+      job: "शिक्षक / Teacher",
+      phone: "+91 98765 43210",
+      email: "ram.sharma@email.com",
+      gotra: "वशिष्ठ / Vashisht",
+      community: "ब्राह्मण समाज / Brahmin Samaj"
+    },
+    // Add more profiles here
+  ];
+
+  return (
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>समाज सदस्य / Samaj Members</Text>
+      {profiles.map((profile, index) => (
+        <ProfileCard key={index} profile={profile} />
+      ))}
+    </ScrollView>
+  );
+};
+
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F7FAFC',
     padding: 16,
-    backgroundColor: '#f5f5f5',
   },
   cardContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
+    backgroundColor: 'white',
+    borderRadius: 8,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    overflow: 'hidden',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    marginBottom: 16,
   },
-  summaryCard: {
-    flex: 1,
+  header: {
+    backgroundColor: '#FFA500',
     padding: 16,
-    borderRightWidth: 1,
-    borderRightColor: '#e0e0e0',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  detailsCard: {
-    flex: 1,
-    padding: 16,
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 12,
-  },
-  summaryInfo: {
-    marginTop: 8,
+  profileImageContainer: {
+    width: 64,
+    height: 64,
+    backgroundColor: 'white',
+    borderRadius: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
   },
-  basicInfo: {
+  community: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 4,
+    color: 'white',
   },
-  infoRow: {
+  infoContainer: {
+    padding: 16,
+  },
+  row: {
+    flexDirection: 'row',
     marginBottom: 12,
   },
   label: {
     fontSize: 12,
-    color: '#666',
-    marginBottom: 2,
+    color: '#A0AEC0',
   },
-  value: {
+  info: {
     fontSize: 14,
-    color: '#333',
+    fontWeight: '600',
+    color: '#4A5568',
   },
-  seeMoreButton: {
-    backgroundColor: '#0066CC',
-    padding: 8,
-    borderRadius: 6,
-    alignItems: 'center',
+  expandButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 12,
   },
-  buttonText: {
-    color: '#fff',
+  expandText: {
     fontSize: 14,
-    fontWeight: '500',
+    color: '#FFA500',
+    marginRight: 8,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  expandedInfo: {
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    paddingBottom: 16,
   },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
+  expandedRow: {
+    flexDirection: 'row',
+    marginBottom: 16,
   },
-  errorText: {
-    color: 'red',
-    fontSize: 16,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+    color: '#2D3748',
   },
 });
 
-export default MatrimonialCard;
+export default SamajProfileList;
