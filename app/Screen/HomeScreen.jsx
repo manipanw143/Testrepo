@@ -11,7 +11,8 @@ const HomeScreen = ({ navigation }) => {
       title: 'Matrimonial',
       icon: 'heart-multiple',
       description: 'Find your life partner',
-      color: ['#FF6B6B', '#FF8E8E']
+      color: ['#FF6B6B', '#FF8E8E'],
+      navigationTarget:'MatrimonialCard'
     },
     {
       title: 'Community Members',
@@ -25,7 +26,7 @@ const HomeScreen = ({ navigation }) => {
       icon: 'briefcase',
       description: 'Professional networking',
       color: ['#6C63FF', '#5A52D5'],
-      navigationTarget: 'BusinessNetwork'
+      navigationTarget: 'ProfileScreen'
     },
     {
       title: 'Temple Donation',
